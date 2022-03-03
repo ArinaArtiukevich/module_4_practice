@@ -1,0 +1,21 @@
+subprojects {
+    apply plugin: 'java'
+    ext {
+        springVersion = '2.6.3'
+        springBoot = 'org.springframework.boot'
+    }
+    dependencies {
+
+        implementation "${springBoot}:spring-boot-starter-web:${springVersion}"
+        implementation "${springBoot}:spring-boot-starter-jdbc:${springVersion}"
+        implementation "${springBoot}:spring-boot-starter-hateoas:${springVersion}"
+        implementation "${springBoot}:spring-boot-starter-data-jpa:${springVersion}"
+        testImplementation "${springBoot}:spring-boot-starter-test:${springVersion}"
+        implementation 'org.postgresql:postgresql:42.2.23'
+        runtimeOnly('org.postgresql:postgresql')
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
