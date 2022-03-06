@@ -10,7 +10,10 @@ subprojects {
         implementation "${springBoot}:spring-boot-starter-jdbc:${springVersion}"
         implementation "${springBoot}:spring-boot-starter-hateoas:${springVersion}"
         implementation "${springBoot}:spring-boot-starter-data-jpa:${springVersion}"
+        implementation "${springBoot}:spring-boot-starter-security:${springVersion}"
         testImplementation "${springBoot}:spring-boot-starter-test:${springVersion}"
+
+        implementation 'org.springframework.security:spring-security-core:5.6.2'
         implementation 'org.postgresql:postgresql:42.2.23'
         runtimeOnly('org.postgresql:postgresql')
     }

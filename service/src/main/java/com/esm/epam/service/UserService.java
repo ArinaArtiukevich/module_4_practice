@@ -50,4 +50,21 @@ public interface UserService {
      * @return required tag
      */
     Optional<Tag> getMostWidelyUsedTag();
+
+    /**
+     * finds user by login
+     *
+     * @param login is required element login
+     * @return required element
+     */
+    Optional<User> getByLogin(String login);
+
+
+    /**
+     * adds new user
+     *
+     * @param user element to be added
+     * @return user
+     */
+    User add(User user);
 }

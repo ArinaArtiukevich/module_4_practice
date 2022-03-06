@@ -10,13 +10,14 @@ public class ParameterAttribute {
     public static final String TAG_FIELD_NAME = "name";
     public static final String TAG_FIELD_CERTIFICATES = "certificateList";
 
+    public static final String USER_FIELD_LOGIN = "login";
+
     public static final String CERTIFICATE_FIELD_ID = "id";
     public static final String CERTIFICATE_FIELD_NAME = "name";
     public static final String CERTIFICATE_FIELD_DESCRIPTION = "description";
     public static final String CERTIFICATE_FIELD_TAGS = "tags";
     public static final String CERTIFICATE_FIELD_DATE = "createDate";
     public static final String CERTIFICATE_FIELD_USERS = "userList";
-
 
     public static final String ORDER_FIELD_PRICE = "price";
     public static final String ORDER_FIELD_USER_ID = "idUser";

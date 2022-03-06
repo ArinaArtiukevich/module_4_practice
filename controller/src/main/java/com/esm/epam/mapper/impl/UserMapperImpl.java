@@ -7,6 +7,7 @@ import com.esm.epam.mapper.Mapper;
 import com.esm.epam.model.dto.CertificateDTO;
 import com.esm.epam.model.dto.UserDTO;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserMapperImpl implements Mapper<UserDTO, User> {
     private Mapper<CertificateDTO, Certificate> certificateMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User mapEntity(UserDTO userDTO) {
@@ -29,6 +31,7 @@ public class UserMapperImpl implements Mapper<UserDTO, User> {
                 .id(userDTO.getId())
                 .login(userDTO.getLogin())
                 .budget(userDTO.getBudget())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
                 .certificates(certificates)
                 .modificationInformation(new ModificationInformation())
                 .build();
