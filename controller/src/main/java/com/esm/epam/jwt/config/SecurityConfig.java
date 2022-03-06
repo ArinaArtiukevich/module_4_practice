@@ -10,8 +10,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.esm.epam.util.ParameterAttribute.ADMIN_ROLE;
 import static com.esm.epam.util.ParameterAttribute.USER_ROLE;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -23,15 +25,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //todo
         http
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(GET, "/users/*").hasRole(USER_ROLE)
+
+                .antMatchers(GET, "/certificates/*").permitAll()
                 .antMatchers(POST, "/auth/*").permitAll()
+
+                .antMatchers(PATCH, "/users/*").hasAnyRole(USER_ROLE, ADMIN_ROLE)
+                .antMatchers(GET, "/users/*", "/tags/*", "/certificates/*", "/tags", "/certificates").hasAnyRole(USER_ROLE, ADMIN_ROLE)
+
+                .anyRequest().hasRole(ADMIN_ROLE)
                 .and()
                 .addFilterBefore(filterBean, UsernamePasswordAuthenticationFilter.class)
         ;

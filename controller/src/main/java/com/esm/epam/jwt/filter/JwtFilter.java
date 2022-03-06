@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -24,7 +25,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static com.esm.epam.util.ParameterAttribute.CODE_AUTHENTICATION_EXCEPTION;
-import static com.esm.epam.util.ParameterAttribute.EMPTY_STRING;
+import static com.esm.epam.util.ParameterAttribute.NULL_STRING;
 
 @Component
 @AllArgsConstructor
@@ -40,11 +41,11 @@ public class JwtFilter extends GenericFilterBean {
             Optional<String> token = jwtProvider.resolveToken((HttpServletRequest) req);
             if (token.isPresent() && jwtProvider.validateToken(token.get())) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(jwtProvider.getLoginFromToken(token.get()));
-                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, EMPTY_STRING, userDetails.getAuthorities());
+                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, NULL_STRING, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             filterChain.doFilter(req, res);
-        } catch (JwtAuthenticationException e) {
+        } catch (JwtAuthenticationException | UsernameNotFoundException e) {
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.setCode(CODE_AUTHENTICATION_EXCEPTION);
             errorResponse.setMessage(e.getMessage());

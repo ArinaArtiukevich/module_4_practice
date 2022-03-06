@@ -15,6 +15,9 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
 
+import static com.esm.epam.util.ParameterAttribute.BEARER_JWT_TOKEN;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @Component
 public class JwtProvider {
     @Value("$(jwt.secret)")
@@ -22,7 +25,6 @@ public class JwtProvider {
 
     public String generateToken(String login) {
         Date date = Date.from(LocalDate.now().plusDays(5).atStartOfDay(ZoneId.systemDefault()).toInstant());
-
         return Jwts.builder()
                 .setSubject(login)
                 .setExpiration(date)
@@ -40,15 +42,14 @@ public class JwtProvider {
     }
 
     public String getLoginFromToken(String token) {
-      return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
     public Optional<String> resolveToken(HttpServletRequest req) {
-        // todo
         Optional<String> token = Optional.empty();
-        String bearerToken = req.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
-            token = Optional.of(bearerToken.substring(7));
+        String bearerToken = req.getHeader(AUTHORIZATION);
+        if (bearerToken != null && bearerToken.startsWith(BEARER_JWT_TOKEN)) {
+            token = Optional.of(bearerToken.substring(BEARER_JWT_TOKEN.length()));
         }
         return token;
     }
