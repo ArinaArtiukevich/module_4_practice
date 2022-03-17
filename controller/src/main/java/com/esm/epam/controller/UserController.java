@@ -74,7 +74,7 @@ public class UserController {
         return updatedUserRepresentation;
     }
 
-    @GetMapping("/mostWidelyUsedTag")
+    @GetMapping("/orders/mostWidelyUsedTag")
     public ResponseEntity<RepresentationModel<TagRepresentation>> getMostWidelyUsedTag() {
         ResponseEntity<RepresentationModel<TagRepresentation>> responseEntity;
         Optional<Tag> requiredTag = userService.getMostWidelyUsedTag();

@@ -27,13 +27,18 @@ public class UserMapperImpl implements Mapper<UserDTO, User> {
                 .orElseGet(Collections::emptyList).stream()
                 .map(certificateMapper::mapEntity)
                 .collect(Collectors.toList());
-        return User.builder()
+        User user = User.builder()
                 .id(userDTO.getId())
                 .login(userDTO.getLogin())
                 .budget(userDTO.getBudget())
-                .password(passwordEncoder.encode(userDTO.getPassword()))
                 .certificates(certificates)
                 .modificationInformation(new ModificationInformation())
                 .build();
+        if (userDTO.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        } else {
+            user.setPassword(userDTO.getPassword());
+        }
+        return user;
     }
 }

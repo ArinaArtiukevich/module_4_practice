@@ -13,7 +13,9 @@ import com.esm.epam.repository.UserDao;
 import com.esm.epam.service.UserService;
 import com.esm.epam.validator.UserValidator;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,6 +55,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User getById(long id) {
+        userValidator.validateUserId(getCurrentUser(), id);
         Optional<User> user = userDao.getById(id);
         userValidator.validateEntity(user, id);
         return user.get();
@@ -60,6 +63,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User update(User user, long idUser) {
+        userValidator.validateUserId(getCurrentUser(), idUser);
+
         User updatedUser;
         Optional<Certificate> certificate;
         Optional<User> userBeforeUpdate = userDao.getById(idUser);
@@ -83,6 +88,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public List<Order> getOrders(long idUser, int page, int size) {
+        userValidator.validateUserId(getCurrentUser(), idUser);
         return orderDao.getLimitedOrders(idUser, (page - 1) * size, size);
     }
 
@@ -127,8 +133,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setBudget(userBeforeUpdate.get().getBudget() - certificate.get().getPrice());
         user.setId(userBeforeUpdate.get().getId());
         user.setLogin(userBeforeUpdate.get().getLogin());
+        user.setRole(userBeforeUpdate.get().getRole());
+        user.setPassword(userBeforeUpdate.get().getPassword());
         user.getModificationInformation().setCreatedEntityBy(userBeforeUpdate.get().getModificationInformation().getCreatedEntityBy());
         user.getModificationInformation().setCreationEntityDate(userBeforeUpdate.get().getModificationInformation().getCreationEntityDate());
 
+    }
+
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userDao.getByLogin(authentication.getName()).get();
     }
 }

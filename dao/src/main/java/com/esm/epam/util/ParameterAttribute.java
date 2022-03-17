@@ -21,6 +21,7 @@ public class ParameterAttribute {
 
     public static final String ORDER_FIELD_PRICE = "price";
     public static final String ORDER_FIELD_USER_ID = "idUser";
+    public static final String ORDER_FIELD_CERTIFICATE_ID = "idCertificate";
 
     public static final String PERCENT_SYMBOL = "%";
 

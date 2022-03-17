@@ -6,12 +6,11 @@ import com.esm.epam.hateoas.HateoasBuilder;
 import com.esm.epam.jwt.provider.JwtProvider;
 import com.esm.epam.mapper.Mapper;
 import com.esm.epam.model.authentication.AuthenticationRequest;
-import com.esm.epam.model.authentication.AuthenticationResponse;
 import com.esm.epam.model.dto.UserDTO;
+import com.esm.epam.model.representation.UserAuthenticationRepresentation;
 import com.esm.epam.model.representation.UserRepresentation;
 import com.esm.epam.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.validation.annotation.Validated;
@@ -39,22 +38,23 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     @ResponseStatus(CREATED)
-    public RepresentationModel<UserRepresentation> addUser(@RequestBody UserDTO userDTO) {
+    public UserAuthenticationRepresentation addUser(@RequestBody UserDTO userDTO) {
         UserRepresentation addedUserRepresentation = userRepresentationModelAssembler.toModel(userService.add(userMapper.mapEntity(userDTO)));
         hateoasBuilder.buildFullHateoas(addedUserRepresentation);
-        return addedUserRepresentation;
+        return UserAuthenticationRepresentation.builder().userRepresentation(addedUserRepresentation).token(jwtProvider.generateToken(userDTO.getLogin())).build();
     }
 
     @PostMapping("/signin")
     @ResponseStatus(OK)
-    public AuthenticationResponse signInUser(@RequestBody AuthenticationRequest authenticationRequest) {
+    public UserAuthenticationRepresentation signInUser(@RequestBody AuthenticationRequest authenticationRequest) {
         Optional<User> user = userService.getByLogin(authenticationRequest.getLogin());
-        AuthenticationResponse authenticationResponse;
+        UserRepresentation authenticationResponse;
         if (user.isPresent() && BCrypt.checkpw(authenticationRequest.getPassword(), user.get().getPassword())) {
-            authenticationResponse = new AuthenticationResponse(jwtProvider.generateToken(authenticationRequest.getLogin()));
+            authenticationResponse = userRepresentationModelAssembler.toModel(user.get());
+            hateoasBuilder.buildFullHateoas(authenticationResponse);
         } else {
             throw new InvalidCredentialsException("Invalid password or login");
         }
-        return authenticationResponse;
+        return UserAuthenticationRepresentation.builder().userRepresentation(authenticationResponse).token(jwtProvider.generateToken(authenticationRequest.getLogin())).build();
     }
 }

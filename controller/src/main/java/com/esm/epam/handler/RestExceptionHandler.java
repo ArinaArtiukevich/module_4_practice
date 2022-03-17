@@ -17,7 +17,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolationException;
 
+import java.nio.file.AccessDeniedException;
+
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -83,6 +86,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidCredentialsException.class)
     @ResponseStatus(NOT_FOUND)
     public final ErrorResponse handleInvalidCredentialsException(InvalidCredentialsException exception) {
+        return new ErrorResponse(10, exception.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(FORBIDDEN)
+    public final ErrorResponse handleAccessDeniedException(AccessDeniedException exception) {
         return new ErrorResponse(11, exception.getLocalizedMessage());
     }
 }

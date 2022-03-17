@@ -36,7 +36,7 @@ public class JwtFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
-            throws IOException, ServletException {
+            throws IOException {
         try {
             Optional<String> token = jwtProvider.resolveToken((HttpServletRequest) req);
             if (token.isPresent() && jwtProvider.validateToken(token.get())) {
@@ -45,11 +45,11 @@ public class JwtFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             filterChain.doFilter(req, res);
-        } catch (JwtAuthenticationException | UsernameNotFoundException e) {
+        } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.setCode(CODE_AUTHENTICATION_EXCEPTION);
             errorResponse.setMessage(e.getMessage());
-            ((HttpServletResponse) res).setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            ((HttpServletResponse) res).setStatus(HttpStatus.FORBIDDEN.value());
             res.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         }
     }

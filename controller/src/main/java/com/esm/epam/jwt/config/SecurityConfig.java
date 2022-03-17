@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(POST, "/auth/*").permitAll()
 
                 .antMatchers(PATCH, "/users/*").hasAnyRole(USER_ROLE, ADMIN_ROLE)
-                .antMatchers(GET, "/users/*", "/tags/*", "/certificates/*", "/tags", "/certificates").hasAnyRole(USER_ROLE, ADMIN_ROLE)
+                .antMatchers(GET, "/users/{id}", "/tags/*", "/certificates/*", "/tags", "/certificates").hasAnyRole(USER_ROLE, ADMIN_ROLE)
 
                 .anyRequest().hasRole(ADMIN_ROLE)
                 .and()
