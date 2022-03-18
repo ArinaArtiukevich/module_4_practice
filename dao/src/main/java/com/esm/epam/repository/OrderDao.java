@@ -3,6 +3,7 @@ package com.esm.epam.repository;
 import com.esm.epam.entity.Order;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderDao {
     /**
@@ -29,4 +30,12 @@ public interface OrderDao {
      * @return required orders
      */
     List<Order> getLimitedOrders(long id, int page, int size);
+
+    /**
+     * gets order by certificate id
+     *
+     * @param idCertificate   is id of certificate
+     * @return required orders
+     */
+    List<Order> getOrderByCertificateId(long idCertificate);
 }

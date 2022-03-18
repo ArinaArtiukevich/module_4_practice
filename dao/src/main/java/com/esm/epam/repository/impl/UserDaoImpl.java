@@ -1,5 +1,6 @@
 package com.esm.epam.repository.impl;
 
+import com.esm.epam.entity.Certificate;
 import com.esm.epam.entity.Order;
 import com.esm.epam.entity.Tag;
 import com.esm.epam.entity.User;
@@ -17,11 +18,13 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
+import static com.esm.epam.util.ParameterAttribute.CERTIFICATE_FIELD_NAME;
 import static com.esm.epam.util.ParameterAttribute.CERTIFICATE_FIELD_USERS;
 import static com.esm.epam.util.ParameterAttribute.ORDER_FIELD_PRICE;
 import static com.esm.epam.util.ParameterAttribute.ORDER_FIELD_USER_ID;
 import static com.esm.epam.util.ParameterAttribute.TAG_FIELD_CERTIFICATES;
 import static com.esm.epam.util.ParameterAttribute.TAG_FIELD_ID;
+import static com.esm.epam.util.ParameterAttribute.USER_FIELD_LOGIN;
 
 @Repository
 @AllArgsConstructor
@@ -73,6 +76,31 @@ public class UserDaoImpl implements UserDao {
         List<Tag> tags = entityManager.createQuery(criteriaQuery).getResultList();
 
         return tags.stream().findFirst();
+    }
+
+    @Override
+    public Optional<User> getByLogin(String login) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        Optional<User> requiredUser = Optional.empty();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
+        Root<User> root = criteriaQuery.from(User.class);
+        criteriaQuery.where(criteriaBuilder.equal(root.get(USER_FIELD_LOGIN), login));
+        TypedQuery<User> query = entityManager.createQuery(criteriaQuery);
+        List<User> certificateList = query.getResultList();
+        if (certificateList.size() == 1) {
+            requiredUser = Optional.ofNullable(certificateList.get(0));
+        }
+        return requiredUser;
+    }
+
+    @Override
+    public User add(User user) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.persist(user);
+        entityManager.getTransaction().commit();
+        return user;
     }
 
     private long getIdUser(EntityManager entityManager, CriteriaBuilder criteriaBuilder) {

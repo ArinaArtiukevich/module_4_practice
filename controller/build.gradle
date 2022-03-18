@@ -9,8 +9,10 @@ repositories {
 dependencies {
     implementation project(':dao')
     implementation project(':service')
+    implementation 'com.auth0:java-jwt:3.18.3'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
     compileOnly 'org.projectlombok:lombok:1.18.22'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
     implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.2.1.Final'

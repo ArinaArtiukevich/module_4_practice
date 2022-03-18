@@ -11,6 +11,8 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,10 +46,18 @@ public class User {
     @NotBlank(message = "Login should not be empty.")
     private String login;
 
+    @Column(name = "user_password", unique = true)
+    @NotBlank(message = "Password should not be empty.")
+    private String password;
+
     @Column(name = "user_budget")
     @NotNull(message = "Budget should not be null.")
     @Min(value = 0, message = "Budget should be positive.")
     private int budget;
+
+    @Column(name = "user_role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @ManyToMany(cascade = {
             MERGE
@@ -55,7 +65,6 @@ public class User {
     @JoinTable(name = "orders",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "certificate_id")})
-    @NotEmpty
     private List<Certificate> certificates;
 
     @Embedded

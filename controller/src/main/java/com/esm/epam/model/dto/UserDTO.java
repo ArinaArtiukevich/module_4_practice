@@ -17,6 +17,7 @@ public class UserDTO {
     private long id;
     private String login;
     private int budget;
+    private String password;
     private List<CertificateDTO> certificates;
 
 }

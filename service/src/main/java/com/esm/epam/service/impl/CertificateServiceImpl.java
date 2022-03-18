@@ -7,6 +7,8 @@ import com.esm.epam.exception.ResourceNotFoundException;
 import com.esm.epam.exception.ServiceException;
 import com.esm.epam.repository.CRDDao;
 import com.esm.epam.repository.CertificateDao;
+import com.esm.epam.repository.OrderDao;
+import com.esm.epam.repository.UserDao;
 import com.esm.epam.service.CertificateService;
 import com.esm.epam.validator.ServiceValidator;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,7 @@ import static com.esm.epam.util.ParameterAttribute.TAG;
 @AllArgsConstructor
 public class CertificateServiceImpl implements CertificateService {
     private final CertificateDao certificateDao;
+    private final OrderDao orderDao;
     private final CRDDao<Tag> tagDao;
     private final ServiceValidator<Certificate> validator;
     private final Builder<Certificate> certificateBuilder;
@@ -73,6 +76,9 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public boolean deleteById(long id) {
+        if (!orderDao.getOrderByCertificateId(id).isEmpty()){
+            throw new ServiceException("Certificate can not be deleted.");
+        }
         return certificateDao.deleteById(id);
     }
 

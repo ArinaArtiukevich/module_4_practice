@@ -3,11 +3,13 @@ package com.esm.epam.handler;
 import com.esm.epam.entity.ErrorResponse;
 import com.esm.epam.exception.ControllerException;
 import com.esm.epam.exception.DaoException;
+import com.esm.epam.exception.InvalidCredentialsException;
 import com.esm.epam.exception.ResourceNotFoundException;
 import com.esm.epam.exception.ServiceException;
 import org.hibernate.TransientObjectException;
 import org.postgresql.util.PSQLException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,7 +17,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolationException;
 
+import java.nio.file.AccessDeniedException;
+
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -70,6 +75,23 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     public final ErrorResponse handleTransientObjectException(TransientObjectException exception) {
         return new ErrorResponse(8, exception.getLocalizedMessage());
+    }
 
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(NOT_FOUND)
+    public final ErrorResponse handleUsernameNotFoundException(UsernameNotFoundException exception) {
+        return new ErrorResponse(9, exception.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(NOT_FOUND)
+    public final ErrorResponse handleInvalidCredentialsException(InvalidCredentialsException exception) {
+        return new ErrorResponse(10, exception.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(FORBIDDEN)
+    public final ErrorResponse handleAccessDeniedException(AccessDeniedException exception) {
+        return new ErrorResponse(11, exception.getLocalizedMessage());
     }
 }
