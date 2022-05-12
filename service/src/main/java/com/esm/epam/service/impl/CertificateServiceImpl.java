@@ -64,6 +64,7 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public Certificate add(Certificate certificate) {
         certificate.setCreateDate(LocalDateTime.now().toString());
+        setCertificateTagsId(certificate);
         return certificateDao.add(certificate);
     }
 
@@ -114,5 +115,17 @@ public class CertificateServiceImpl implements CertificateService {
             List<Object> tagsObjectList = new ArrayList<>(tags);
             params.replace(TAG, tagsObjectList);
         }
+    }
+
+    private void setCertificateTagsId(Certificate certificate) {
+        certificate.getTags().forEach(tag -> {
+            if (tag.getName() != null) {
+                Optional<Tag> requiredTag = tagDao.getByName(tag.getName());
+                if (!requiredTag.isPresent()) {
+                    throw new ServiceException(String.format("Tag with name = %s does not exist", tag.getName()));
+                }
+                tag.setId(requiredTag.get().getId());
+            }
+        });
     }
 }

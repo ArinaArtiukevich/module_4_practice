@@ -19,6 +19,7 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
+import static com.esm.epam.util.ParameterAttribute.CERTIFICATE_FIELD_DATE;
 import static com.esm.epam.util.ParameterAttribute.CERTIFICATE_FIELD_ID;
 import static com.esm.epam.util.ParameterAttribute.CERTIFICATE_FIELD_NAME;
 
@@ -49,6 +50,9 @@ public class CertificateDaoImpl implements CertificateDao {
         CriteriaQuery<Certificate> criteriaQuery = criteriaBuilder.createQuery(Certificate.class);
         Root<Certificate> root = criteriaQuery.from(Certificate.class);
         criteriaQuery.select(root);
+
+        criteriaQuery.orderBy(criteriaBuilder.desc(root.get(CERTIFICATE_FIELD_ID)));
+
         TypedQuery<Certificate> query = entityManager.createQuery(criteriaQuery);
         return query.setFirstResult(page).setMaxResults(size).getResultList();
     }
