@@ -33,6 +33,12 @@ public class CertificateBuilderImpl implements Builder<Certificate> {
             newCertificate.setName(currentObject.getName());
         }
 
+        if (objectToBeUpdated.getImage() != null) {
+            newCertificate.setImage(objectToBeUpdated.getImage());
+        } else {
+            newCertificate.setImage(currentObject.getImage());
+        }
+
         if (objectToBeUpdated.getDescription() != null) {
             newCertificate.setDescription(objectToBeUpdated.getDescription());
         } else {

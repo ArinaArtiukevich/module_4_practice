@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,5 +20,6 @@ public class CertificateDTO {
     private String description;
     private int price;
     private int duration;
+    private MultipartFile file;
     private List<TagDTO> tags;
 }

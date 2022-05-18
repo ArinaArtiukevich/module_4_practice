@@ -29,6 +29,7 @@ public class UserRepresentationAssembler implements RepresentationModelAssembler
                 .id(entity.getId())
                 .login(entity.getLogin())
                 .budget(entity.getBudget())
+                .role(entity.getRole())
                 .certificates(certificateRepresentations)
                 .modificationInformation(entity.getModificationInformation())
                 .build();

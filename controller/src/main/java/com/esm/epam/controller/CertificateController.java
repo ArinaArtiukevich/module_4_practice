@@ -10,11 +10,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Min;
 import java.util.Optional;
@@ -89,9 +93,9 @@ public class CertificateController {
         return responseEntity;
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(CREATED)
-    public RepresentationModel<CertificateRepresentation> addCertificate(@RequestBody CertificateDTO certificateDTO) {
+    public RepresentationModel<CertificateRepresentation> addCertificate(@ModelAttribute CertificateDTO certificateDTO) {
         CertificateRepresentation addedCertificateRepresentation = certificateRepresentationAssembler.toModel(certificateService.add(certificateMapper.mapEntity(certificateDTO)));
         hateoasBuilder.buildFullHateoas(addedCertificateRepresentation);
         return addedCertificateRepresentation;
@@ -99,7 +103,7 @@ public class CertificateController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(OK)
-    public RepresentationModel<CertificateRepresentation> updateCertificate(@PathVariable("id") @Min(1L) long id, @RequestBody CertificateDTO certificateDTO) {
+    public RepresentationModel<CertificateRepresentation> updateCertificate(@PathVariable("id") @Min(1L) long id, @ModelAttribute CertificateDTO certificateDTO) {
         CertificateRepresentation updatedCertificateRepresentation = certificateRepresentationAssembler.toModel(certificateService.update(certificateMapper.mapEntity(certificateDTO), id));
         hateoasBuilder.buildFullHateoas(updatedCertificateRepresentation);
         return updatedCertificateRepresentation;

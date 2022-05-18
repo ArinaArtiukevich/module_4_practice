@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.orm.hibernate5.SpringFlushSynchronization;
 
 import java.util.List;
 
@@ -18,5 +19,6 @@ public class CertificateRepresentation extends RepresentationModel<CertificateRe
     private final int price;
     private final int duration;
     private final List<TagRepresentation> tags;
+    private final String imagePath;
     private ModificationInformation modificationInformation;
 }

@@ -24,6 +24,11 @@ public class ParameterAttribute {
     public static final String ADMIN_ROLE = "ADMIN";
     public static final String BEARER_JWT_TOKEN = "Bearer_";
 
+    public static final String IMAGES_FOLDER_PATH = "./images/";
+    public static final String IMAGES_FOLDER_NAME = "images/";
+    public static final String SLASH = "/";
+    public static final String EMPTY_STRING = "";
+
     public static final int DEFAULT_PAGE_NUMBER = 1;
     public static final int DEFAULT_SIZE = 5;
     public static final int CODE_AUTHENTICATION_EXCEPTION = 10;

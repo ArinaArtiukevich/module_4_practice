@@ -60,6 +60,9 @@ public class Certificate {
     @Column(name = "last_update_date")
     private String lastUpdateDate;
 
+    @Column(name = "image")
+    private String image;
+
     @ManyToMany(cascade = {
             MERGE
     })

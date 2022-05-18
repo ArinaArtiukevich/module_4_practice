@@ -9,10 +9,15 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.esm.epam.util.ParameterAttribute.IMAGES_FOLDER_NAME;
+import static com.esm.epam.util.ParameterAttribute.SLASH;
 
 @Component
 @AllArgsConstructor
@@ -25,6 +30,7 @@ public class CertificateRepresentationAssembler implements RepresentationModelAs
                 .orElseGet(Collections::emptyList).stream()
                 .map(tagRepresentationAssembler::toModel)
                 .collect(Collectors.toList());
+
         return CertificateRepresentation.builder()
                 .id(entity.getId())
                 .name(entity.getName())
@@ -32,6 +38,7 @@ public class CertificateRepresentationAssembler implements RepresentationModelAs
                 .price(entity.getPrice())
                 .duration(entity.getDuration())
                 .tags(tagsRepresentation)
+                .imagePath(getImageAbsolutePath(entity))
                 .modificationInformation(entity.getModificationInformation())
                 .build();
     }
@@ -39,5 +46,13 @@ public class CertificateRepresentationAssembler implements RepresentationModelAs
     @Override
     public CollectionModel<CertificateRepresentation> toCollectionModel(Iterable<? extends Certificate> entities) {
         return RepresentationModelAssembler.super.toCollectionModel(entities);
+    }
+
+    private String getImageAbsolutePath(Certificate entity) {
+        String image = null;
+        if (entity.getImage() != null && entity.getName() != null) {
+            image = SLASH + entity.getName() + SLASH + entity.getImage();
+        }
+        return image;
     }
 }

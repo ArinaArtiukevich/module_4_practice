@@ -15,6 +15,7 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
+import static com.esm.epam.util.ParameterAttribute.CERTIFICATE_FIELD_ID;
 import static com.esm.epam.util.ParameterAttribute.TAG_FIELD_ID;
 import static com.esm.epam.util.ParameterAttribute.TAG_FIELD_NAME;
 
@@ -31,6 +32,9 @@ public class TagDaoImpl implements CRDDao<Tag> {
         CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
         Root<Tag> root = criteriaQuery.from(Tag.class);
         criteriaQuery.select(root);
+
+        criteriaQuery.orderBy(criteriaBuilder.desc(root.get(TAG_FIELD_ID)));
+
         TypedQuery<Tag> query = entityManager.createQuery(criteriaQuery);
         return query.setFirstResult(page).setMaxResults(size).getResultList();
     }
