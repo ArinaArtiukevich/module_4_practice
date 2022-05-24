@@ -41,6 +41,9 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     private List<Certificate> certificateList;
 
+    @Column(name = "tag_image")
+    private String tagImage;
+
     @Embedded
     private ModificationInformation modificationInformation = new ModificationInformation();
 

@@ -12,5 +12,6 @@ import org.springframework.hateoas.RepresentationModel;
 public class TagRepresentation extends RepresentationModel<TagRepresentation> {
     private final Long id;
     private final String name;
+    private final String imagePath;
     private final ModificationInformation modificationInformation;
 }

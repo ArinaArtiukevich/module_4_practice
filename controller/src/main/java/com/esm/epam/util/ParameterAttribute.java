@@ -26,6 +26,9 @@ public class ParameterAttribute {
 
     public static final String IMAGES_FOLDER_PATH = "./images/";
     public static final String IMAGES_FOLDER_NAME = "images/";
+    public static final String TAGS_FOLDER_NAME = "categories";
+
+    public static final String CERTIFICATES_FOLDER_NAME = "coupons";
     public static final String SLASH = "/";
     public static final String EMPTY_STRING = "";
 

@@ -16,8 +16,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.esm.epam.util.ParameterAttribute.CERTIFICATES_FOLDER_NAME;
 import static com.esm.epam.util.ParameterAttribute.IMAGES_FOLDER_NAME;
 import static com.esm.epam.util.ParameterAttribute.SLASH;
+import static com.esm.epam.util.ParameterAttribute.TAGS_FOLDER_NAME;
 
 @Component
 @AllArgsConstructor
@@ -51,7 +53,7 @@ public class CertificateRepresentationAssembler implements RepresentationModelAs
     private String getImageAbsolutePath(Certificate entity) {
         String image = null;
         if (entity.getImage() != null && entity.getName() != null) {
-            image = SLASH + entity.getName() + SLASH + entity.getImage();
+            image = SLASH + CERTIFICATES_FOLDER_NAME + SLASH + entity.getName() + SLASH + entity.getImage();
         }
         return image;
     }

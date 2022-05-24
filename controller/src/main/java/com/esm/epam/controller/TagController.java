@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,7 +70,7 @@ public class TagController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public RepresentationModel<TagRepresentation> addTag(@RequestBody TagDTO tagDTO) {
+    public RepresentationModel<TagRepresentation> addTag(@ModelAttribute TagDTO tagDTO) {
         TagRepresentation addedTagRepresentation = tagRepresentationAssembler.toModel(tagService.add(tagMapper.mapEntity(tagDTO)));
         hateoasBuilder.buildFullHateoas(addedTagRepresentation);
         return addedTagRepresentation;
