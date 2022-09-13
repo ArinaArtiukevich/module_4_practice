@@ -5,11 +5,14 @@ import com.esm.epam.entity.Certificate;
 import com.esm.epam.exception.DaoException;
 import com.esm.epam.repository.CertificateDao;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
@@ -19,7 +22,6 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
-import static com.esm.epam.util.ParameterAttribute.CERTIFICATE_FIELD_DATE;
 import static com.esm.epam.util.ParameterAttribute.CERTIFICATE_FIELD_ID;
 import static com.esm.epam.util.ParameterAttribute.CERTIFICATE_FIELD_NAME;
 
@@ -27,11 +29,11 @@ import static com.esm.epam.util.ParameterAttribute.CERTIFICATE_FIELD_NAME;
 @AllArgsConstructor
 public class CertificateDaoImpl implements CertificateDao {
     private final PredicateBuilder predicateBuilder;
-    private final EntityManagerFactory entityManagerFactory;
+    @PersistenceContext
+    private final EntityManager entityManager;
 
     @Override
     public List<Certificate> getFilteredList(MultiValueMap<String, Object> params, int page, int size) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> criteriaQuery = criteriaBuilder.createQuery(Certificate.class);
         Root<Certificate> root = criteriaQuery.from(Certificate.class);
@@ -45,7 +47,6 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     public List<Certificate> getAll(int page, int size) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> criteriaQuery = criteriaBuilder.createQuery(Certificate.class);
         Root<Certificate> root = criteriaQuery.from(Certificate.class);
@@ -58,23 +59,17 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
+    @Transactional
     public Certificate update(Certificate certificate) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-        Certificate updatedCertificate = entityManager.merge(certificate);
-        entityManager.getTransaction().commit();
-        return updatedCertificate;
+        return entityManager.merge(certificate);
     }
 
     @Override
+    @Transactional
     public Certificate add(Certificate certificate) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
         entityManager.persist(certificate);
-        entityManager.getTransaction().commit();
-
         Optional<Certificate> addedCertificate = getById(certificate.getId());
-        if (!addedCertificate.isPresent()){
+        if (!addedCertificate.isPresent()) {
             throw new DaoException("Certificate was not added");
         }
         return addedCertificate.get();
@@ -82,39 +77,33 @@ public class CertificateDaoImpl implements CertificateDao {
 
     @Override
     public Optional<Certificate> getById(long id) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         return Optional.ofNullable(entityManager.find(Certificate.class, id));
     }
 
     @Override
+    @Transactional
     public boolean deleteById(long id) {
         boolean isDeleted = false;
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaDelete<Certificate> criteriaDelete = criteriaBuilder.createCriteriaDelete(Certificate.class);
         Root<Certificate> root = criteriaDelete.from(Certificate.class);
         criteriaDelete.where(criteriaBuilder.equal(root.get(CERTIFICATE_FIELD_ID), id));
-        entityManager.getTransaction().begin();
         if (entityManager.createQuery(criteriaDelete).executeUpdate() > 0) {
             isDeleted = true;
         }
-        entityManager.getTransaction().commit();
         return isDeleted;
     }
 
     @Override
+    @Transactional
     public Optional<Certificate> deleteTag(long id, long idTag) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
         Certificate certificate = entityManager.find(Certificate.class, id);
         certificate.getTags().removeIf(tag -> (tag.getId().equals(idTag)));
-        entityManager.getTransaction().commit();
         return getById(id);
     }
 
     @Override
     public Optional<Certificate> getByName(String name) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         Optional<Certificate> requiredCertificate = Optional.empty();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> criteriaQuery = criteriaBuilder.createQuery(Certificate.class);

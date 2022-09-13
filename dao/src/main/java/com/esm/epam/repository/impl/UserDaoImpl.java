@@ -7,10 +7,14 @@ import com.esm.epam.entity.User;
 import com.esm.epam.exception.DaoException;
 import com.esm.epam.repository.UserDao;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -29,12 +33,11 @@ import static com.esm.epam.util.ParameterAttribute.USER_FIELD_LOGIN;
 @Repository
 @AllArgsConstructor
 public class UserDaoImpl implements UserDao {
-
-    private final EntityManagerFactory entityManagerFactory;
+    @PersistenceContext
+    private final EntityManager entityManager;
 
     @Override
     public List<User> getAll(int page, int size) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
         Root<User> root = criteriaQuery.from(User.class);
@@ -45,24 +48,19 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<User> getById(long id) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         return Optional.ofNullable(entityManager.find(User.class, id));
     }
 
     @Override
+    @Transactional
     public User updateBudget(User user) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-        User updatedUser = entityManager.merge(user);
-        entityManager.getTransaction().commit();
-        return updatedUser;
+        return entityManager.merge(user);
     }
 
     @Override
     public Optional<Tag> getMostWidelyUsedTag() {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        long idUser = getIdUser(entityManager, criteriaBuilder);
+        long idUser = getIdUser(criteriaBuilder);
 
         CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
         Root<Tag> root = criteriaQuery.from(Tag.class);
@@ -80,7 +78,6 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<User> getByLogin(String login) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         Optional<User> requiredUser = Optional.empty();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
@@ -95,15 +92,13 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    @Transactional
     public User add(User user) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
         entityManager.persist(user);
-        entityManager.getTransaction().commit();
         return user;
     }
 
-    private long getIdUser(EntityManager entityManager, CriteriaBuilder criteriaBuilder) {
+    private long getIdUser(CriteriaBuilder criteriaBuilder) {
         long idUser;
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Order> root = criteriaQuery.from(Order.class);
